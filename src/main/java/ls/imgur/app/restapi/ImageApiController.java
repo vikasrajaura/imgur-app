@@ -37,6 +37,9 @@ public class ImageApiController {
     RestTemplate restTemplate;
 
 
+    /**
+     * This will return all images details list stored for an imgur account
+     */
     @GetMapping(value="/account/images", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Image>> getAccountImages() throws JsonProcessingException {
         HttpEntity <String> entity = new HttpEntity<>(headers);
@@ -53,6 +56,9 @@ public class ImageApiController {
         return new ResponseEntity<>(images, HttpStatus.OK);
     }
 
+    /**
+     * This will return a single image detail stored for an imgur account
+     */
     @GetMapping(value="/account/{username}/image/{imageId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Image> getAccountImageById(@PathVariable("username") String username, @PathVariable("imageId") String imageId) throws JsonProcessingException, ResourceNotFoundException {
         HttpEntity <String> entity = new HttpEntity<>(headers);
@@ -61,17 +67,20 @@ public class ImageApiController {
         Map<String, Object> jsonObj = restTemplate.exchange(String.format(GET_ACCOUNT_IMAGE, username, imageId), HttpMethod.GET, entity, Map.class).getBody();
         HashMap<String, ?> imgObj = (HashMap)jsonObj.get("data");
         Image image = null;
-        if(imgObj.get("error")!=null) {
+        if(imgObj.get("error")==null) {
             image = Image.mapper(imgObj);
         } else {
             String errorMsg = (String)imgObj.get("error");
-            log.info(errorMsg);
+            log.error(errorMsg);
             throw new ResourceNotFoundException(errorMsg);
         }
         return new ResponseEntity<>(image, HttpStatus.OK);
     }
 
 
+    /**
+     * This will delete an image stored on an imgur account
+     */
     @DeleteMapping(value="/account/{username}/image/{deleteHash}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteAccountImageById(@PathVariable("username") String username, @PathVariable("deleteHash") String deleteHash) throws JsonProcessingException {
 
@@ -81,6 +90,37 @@ public class ImageApiController {
         Map<String, Object> jsonObj = restTemplate.exchange(url, HttpMethod.DELETE, entity, Map.class).getBody();
 
         return new ResponseEntity("Request Successful", HttpStatus.NO_CONTENT);
+    }
+
+
+    /**
+     * Need to Implement
+     * This will upload a file for an imgur account
+     */
+    @PostMapping(value="/upload", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity uploadImage() throws JsonProcessingException {
+
+        HttpEntity <String> entity = new HttpEntity<>(headers);
+        String url = String.format("", "", "");
+
+        Map<String, Object> jsonObj = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class).getBody();
+
+        return new ResponseEntity("Request Successful", HttpStatus.CREATED);
+    }
+
+    /**
+     * Need to Implement
+     * This will download a file for an imgur account
+     */
+    @GetMapping(value="/download", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity downloadImage() throws JsonProcessingException {
+
+        HttpEntity <String> entity = new HttpEntity<>(headers);
+        String url = String.format(GET_ACCOUNT_IMAGE, "", "");
+
+        Map<String, Object> jsonObj = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();
+
+        return new ResponseEntity("Request Successful", HttpStatus.OK);
     }
 
 }

@@ -16,8 +16,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleNullPointerException(Exception e) {
         Map<String, String> map = new HashMap<>();
         map.put("exceptionMsg", e.getMessage());
-        map.put("cause", e.getCause().getMessage());
         map.put("timeStamp", LocalDateTime.now().toString());
+        map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.toString());
         map.put("stackTrace", "Details: "+e);
         return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -26,10 +26,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException e) {
         Map<String, String> map = new HashMap<>();
         map.put("exceptionMsg", e.getMessage());
-        map.put("cause", e.getCause().getMessage());
         map.put("timeStamp", LocalDateTime.now().toString());
+        map.put("status", HttpStatus.NOT_FOUND.toString());
         map.put("stackTrace", "Details: "+e);
-        return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
     }
 
 }
