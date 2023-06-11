@@ -44,14 +44,14 @@ public class UserService implements IUserService {
 	@Override
 	public User update(User user) {
 		userDao.update(user.getFirstName(), user.getMiddleName(), user.getLastName(),
-				user.getEmail(), user.getGender(), user.getDob(), user.getUserId());
+				user.getEmail(), user.getGender(), user.getUserId());
 		return user;
 	}
 
 	@Override
 	public Collection<User> updateAll(Collection<User> users) {
 		users.forEach(e -> userDao.update(e.getFirstName(), e.getMiddleName(), e.getLastName(), e.getEmail(),
-				e.getGender(), e.getDob(), e.getUserId()));
+				e.getGender(), e.getUserId()));
 		Set<Long> userIds = new HashSet<>();
 		users.forEach(e -> userIds.add(e.getUserId()));
 		return userDao.findAllById(userIds);

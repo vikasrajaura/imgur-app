@@ -59,11 +59,6 @@ public class User {
 	@Column(name = "GENDER")
 	private String gender;
 
-	@Past
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@Column(name = "DOB")
-	private Date dob;
-
 	@JsonManagedReference
 	@ManyToMany(cascade=CascadeType.MERGE)
 	@JoinTable(name = "users_roles_map", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -90,7 +85,7 @@ public class User {
 
 
 	public User(Long userId, String userName, String password, String firstName, String middleName, String lastName,
-			String email, String gender, Date dob, Set<Role> roles, Timestamp lastLogin, boolean isAccountExpired,
+			String email, String gender, Set<Role> roles, Timestamp lastLogin, boolean isAccountExpired,
 			boolean isAccountLocked, boolean isCredentialsExpired, boolean isEnabled, Long branchId, List<Long> roleIds) {
 		super();
 		this.userId = userId;
@@ -101,7 +96,6 @@ public class User {
 		this.lastName = lastName;
 		this.email = email;
 		this.gender = gender;
-		this.dob = dob;
 		this.roles = roles;
 		this.lastLogin = lastLogin;
 		this.isAccountExpired = isAccountExpired;

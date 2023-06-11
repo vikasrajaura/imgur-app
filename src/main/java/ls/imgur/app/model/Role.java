@@ -13,7 +13,6 @@ import java.util.Set;
 @Table(name = "ROLES")
 @Data
 @NoArgsConstructor
-@ToString(exclude={"users"})
 public class Role {
 	
 	@Id

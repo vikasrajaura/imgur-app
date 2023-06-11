@@ -1,9 +1,7 @@
 package ls.imgur.app.restapi;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
 import ls.imgur.app.exception.ResourceNotFoundException;
 import ls.imgur.app.model.Image;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import java.util.*;
 @Slf4j
 public class ImageApiController {
 
+    private static final String IMGUR_URL = "https://api.imgur.com/3/";
     private static final String ACCESS_TOKEN = "aa8ad792c762a5681190cf64329eeea6e0266206";
     private static HttpHeaders headers = new HttpHeaders();
     static {
@@ -26,30 +25,24 @@ public class ImageApiController {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
     }
-    private static String IMGUR_URL = "https://api.imgur.com/3/";
-    private static String ACCOUNT_IMAGES = IMGUR_URL+"account/me/images";
-    private static String GET_ACCOUNT_IMAGE = IMGUR_URL+"account/%s/image/%s";
-    private static String DELETE_ACCOUNT_IMAGE = IMGUR_URL+"account/%s/image/%s";
-    private static String POST_ACCOUNT_IMAGE = IMGUR_URL+"account/%s/image}";
-
 
     @Autowired
     RestTemplate restTemplate;
-
 
     /**
      * This will return all images details list stored for an imgur account
      */
     @GetMapping(value="/account/images", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Image>> getAccountImages() throws JsonProcessingException {
+    public ResponseEntity<List<Image>> getAccountImages() {
         HttpEntity <String> entity = new HttpEntity<>(headers);
 
+        String ACCOUNT_IMAGES = IMGUR_URL+"account/me/images";
         Map<String, Object> jsonObj = restTemplate.exchange(ACCOUNT_IMAGES, HttpMethod.GET, entity, Map.class).getBody();
-        List<Object> arr = (ArrayList)jsonObj.get("data");
+        List<Object> arr = (ArrayList<Object>)jsonObj.get("data");
 
         List<Image> images = new ArrayList<>();
         for(Object ob : arr) {
-            HashMap<String, ?> map = (HashMap) ob;
+            Map<String, Object> map = (HashMap) ob;
             Image img = Image.mapper(map);
             images.add(img);
         }
@@ -60,11 +53,12 @@ public class ImageApiController {
      * This will return a single image detail stored for an imgur account
      */
     @GetMapping(value="/account/{username}/image/{imageId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Image> getAccountImageById(@PathVariable("username") String username, @PathVariable("imageId") String imageId) throws JsonProcessingException, ResourceNotFoundException {
+    public ResponseEntity<Image> getAccountImageById(@PathVariable("username") String username, @PathVariable("imageId") String imageId) throws ResourceNotFoundException {
         HttpEntity <String> entity = new HttpEntity<>(headers);
+        String GET_ACCOUNT_IMAGE = IMGUR_URL+"account/%s/image/%s";
         String url = String.format(GET_ACCOUNT_IMAGE, username, imageId);
 
-        Map<String, Object> jsonObj = restTemplate.exchange(String.format(GET_ACCOUNT_IMAGE, username, imageId), HttpMethod.GET, entity, Map.class).getBody();
+        Map<String, Object> jsonObj = restTemplate.exchange(String.format(url, username, imageId), HttpMethod.GET, entity, Map.class).getBody();
         HashMap<String, ?> imgObj = (HashMap)jsonObj.get("data");
         Image image = null;
         if(imgObj.get("error")==null) {
@@ -82,9 +76,10 @@ public class ImageApiController {
      * This will delete an image stored on an imgur account
      */
     @DeleteMapping(value="/account/{username}/image/{deleteHash}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteAccountImageById(@PathVariable("username") String username, @PathVariable("deleteHash") String deleteHash) throws JsonProcessingException {
+    public ResponseEntity deleteAccountImageById(@PathVariable("username") String username, @PathVariable("deleteHash") String deleteHash) {
 
         HttpEntity <String> entity = new HttpEntity<>(headers);
+        String DELETE_ACCOUNT_IMAGE = IMGUR_URL+"account/%s/image/%s";
         String url = String.format(DELETE_ACCOUNT_IMAGE, username, deleteHash);
 
         Map<String, Object> jsonObj = restTemplate.exchange(url, HttpMethod.DELETE, entity, Map.class).getBody();
@@ -98,10 +93,11 @@ public class ImageApiController {
      * This will upload a file for an imgur account
      */
     @PostMapping(value="/upload", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity uploadImage() throws JsonProcessingException {
+    public ResponseEntity uploadImage() {
 
         HttpEntity <String> entity = new HttpEntity<>(headers);
-        String url = String.format("", "", "");
+        String POST_ACCOUNT_IMAGE = IMGUR_URL+"account/%s/image";
+        String url = String.format(POST_ACCOUNT_IMAGE, "", "");
 
         Map<String, Object> jsonObj = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class).getBody();
 
@@ -113,9 +109,10 @@ public class ImageApiController {
      * This will download a file for an imgur account
      */
     @GetMapping(value="/download", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity downloadImage() throws JsonProcessingException {
+    public ResponseEntity downloadImage() {
 
         HttpEntity <String> entity = new HttpEntity<>(headers);
+        String GET_ACCOUNT_IMAGE = IMGUR_URL+"account/%s/image/%s";
         String url = String.format(GET_ACCOUNT_IMAGE, "", "");
 
         Map<String, Object> jsonObj = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();

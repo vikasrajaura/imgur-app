@@ -15,8 +15,8 @@ import java.util.List;
 public interface IUserDao extends JpaRepository<User, Long> {
 
 	public static final String UPDATE_USER = "UPDATE User u SET u.firstName = :firstName, u.middleName = :middleName, "
-			+ "u.lastName = :lastName, u.email = :email, u.gender = :gender,"
-			+ "u.dob = :dob WHERE u.userId = :userId";
+			+ "u.lastName = :lastName, u.email = :email, u.gender = :gender"
+			+ " WHERE u.userId = :userId";
 
 	User findByUserName(String userName);
 	
@@ -36,7 +36,7 @@ public interface IUserDao extends JpaRepository<User, Long> {
     @Query(UPDATE_USER)
 	public void update(@Param("firstName") String firstName, @Param("middleName") String middleName, 
 			@Param("lastName") String lastName, @Param("email") String email, 
-			@Param("gender") String gender, @Param("dob") Date dob, @Param("userId") Long userId);
+			@Param("gender") String gender, @Param("userId") Long userId);
 
 	@Modifying
     @Query("UPDATE User u SET u.password = :newPassword WHERE u.userId = :userId")
