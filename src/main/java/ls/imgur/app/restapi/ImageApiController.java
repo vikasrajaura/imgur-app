@@ -18,8 +18,8 @@ import java.util.*;
 public class ImageApiController {
 
     private static final String CLIENT_NAME = "imgur-vikas";
-    private static final String CLIENT_ID = "962a4d85e41c179"
-    private static final String CLIENT_SECRET = "73a78ae144fe7a72a9eab516a7ce99add968572b"
+    private static final String CLIENT_ID = "962a4d85e41c179";
+    private static final String CLIENT_SECRET = "73a78ae144fe7a72a9eab516a7ce99add968572b";
     private static final String IMGUR_URL = "https://api.imgur.com/3/";
     private static final String ACCESS_TOKEN = "aa8ad792c762a5681190cf64329eeea6e0266206";
     private static HttpHeaders headers = new HttpHeaders();
